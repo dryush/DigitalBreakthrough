@@ -134,7 +134,7 @@ namespace Sample.Mvc.Controllers
         }
 
         // POST: Discussion/Create
-        [HttpPost]
+        [HttpPost("/SchoolClasses/{classId}/Discussion/Create")]
         [ValidateAntiForgeryToken]
         public ActionResult Create(IFormCollection collection)
         {
