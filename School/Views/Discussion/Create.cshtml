@@ -1,0 +1,121 @@
+﻿@model StringModel
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Создание Обсуждения</h2>
+<hr />
+<div class="row" id="app">
+    <div class="col-md-4">
+        <form asp-action="Create" >
+            <div class="form-group">
+                <label class="control-label"> Название </label>
+                <input class="form-control" v-model="value.name" />
+                <span class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label"> Описание </label>
+                <input class="form-control" v-model="value.description" />
+                <span class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label"> Дата завершения </label>
+                <input asp-for="DateEnd" class="form-control"  />
+                <span class="text-danger"></span>
+            </div>
+            <div id="voicings" class="form-group">
+                <label>Голосования:</label>
+                <button type="button" class="btn btn-outline-info" v-on:click="addVoicing">Добавить голосование</button>
+                <div v-for="(v, i) of value.voicings">
+                    <hr />
+                    <h4> Голосование {{ i + 1}}</h4>
+                    <div>
+                        <label class="control-label"> Название </label>
+                        <input class="form-control" v-model="value.voicings[i].name" />
+                        <span class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label"> Описание </label>
+                        <input class="form-control" v-model="value.voicings[i].description" />
+                        <span class="text-danger"></span>
+                    </div>
+                    <div v-for="(o, io) of v.options">
+                        <label>Вариант {{ io + 1 }}</label>
+                        <input class="form-control" v-model="value.voicings[i].options[io].name" />
+                    </div>
+                    <br>
+                    <button type="button" class="btn btn-outline-info" v-on:click="addVoicingOption(i)">Добавить Вариант</button>
+                </div>
+            </div>
+            <input asp-for="Value" :value="json" style="display:none;" />
+            <div class="form-group">
+                <input type="submit" value="Создание" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            value: {
+                name: "",
+                description: "",
+                dateEnd: new Date(),
+                voicings: [{
+                    name: "",
+                    description: "",
+                    options: [{
+                        name: "Согласен"
+                    }, {
+                        name: "Против"
+                    }]
+                }]
+            }
+        },
+        methods: {
+            addVoicing() {
+                this.value.voicings.push({
+                    name: "",
+                    description: "",
+                    options: [{
+                        name: "Согласен"
+                    }, {
+                        name: "Против"
+                    }]
+                })
+            },
+            removeVoicing(i) {
+                this.value.voicings.splice(i, 1);
+            },
+            addVoicingOption(iVoicing) {
+                this.value.voicings[iVoicing].options.push({ name: "" })
+            },
+            removeVoicingOption(iVoicing, i) {
+                this.value.voicings[iVoicing].options.splice(i, 1)
+            },
+            send() {
+
+            }
+        },
+        computed: {
+            json() {
+                return JSON.stringify(this.value);
+            }
+        }
+    })
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

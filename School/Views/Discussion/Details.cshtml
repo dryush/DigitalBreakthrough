@@ -1,0 +1,155 @@
+﻿@model School.Models.DiscussionModel
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div>
+    <script>
+        function voice(voicing) {
+            let url = document.querySelector('#voicing-' + voicing + ' > :checked').id.split('-')[1];
+            url += '_' + window.location.pathname.split('/').slice(-1)[0];
+            url += '_' + window.location.pathname.split('/')[2];
+            window.location.replace('/Voice/' + url);
+        }
+    </script>
+    <h1>Обсуждение</h1>
+
+    <h2> @Model.Name</h2>
+    <pre> @Model.Description</pre>
+    <div class="row">
+        <div class="col-6" id="app">
+            <div class="modal-content" style="">
+                <div class="modal-content" style="padding-left:15px; padding-right:15px;min-height:300px;">
+                    <ul>
+                        <li v-for="mes of messages">
+                            <bold>{{mes.fullName}}</bold>
+                            <br />
+                            <span>{{mes.text}}</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="row">
+                    <div class="col-10">
+                        <textarea class="form-control" v-model="text">  </textarea>
+                    </div>
+                    <div class="col-1">
+                        <i class="fa fa-2x fa-paper-plane" v-on:click="send" aria-hidden="true" style="padding-top: 15px;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            @foreach (var voicing in Model.Voicinigs)
+            {
+
+                @using (Html.BeginForm("Route"))
+                {
+                    <h4>@voicing.Name</h4>
+                    <div>@voicing.Description</div>
+                    <hr />
+                    <span>Проголосовало: @voicing.VoutedCount / @Model.SchoolClassParentsCount </span>
+                    <div class="progress">
+                        <div class="progress-bar bg-success" role="progressbar" style="width:@((int)(100.0 * voicing.VoutedCount / Model.SchoolClassParentsCount))%;">
+
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label>Варианты</label>
+                        @foreach (var option in voicing.Options)
+                        {
+                            @if (voicing.IsShowVoices)
+                            {
+                                <div class="form-check" id="voicing-@voicing.Id">
+                                    <input name="optionId" value="@option.Id" class="form-check-input" type="radio" id="opt-@option.Id" checked>
+                                    <label class="form-check-label" for="opt-@option.Id">
+                                        @option.Name
+                                    </label>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="form-group">
+                                    <div class="progress" style="height:1.5rem; color:black;">
+                                        <div class="progress-bar bg-info" role="progressbar" style="color:black;text-align: left;padding-left: 15px;font-size: 1rem; width:@((int)(100.0 * option.VoutedCount / voicing.VoutedCount))%;">
+                                            @(option.Name + " " + option.VoutedCount + "/" + voicing.VoutedCount)
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+
+                    </div>
+                    @if (voicing.IsShowVoices)
+                    {
+                        <button type="button" onclick="voice(@voicing.Id)" class="btn btn-primary">Проголосовать</button>
+                    }
+                }
+            }
+
+        </div>
+    </div>
+
+</div>
+<div>
+    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    <a asp-action="Index">Back to List</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+    setTimeout(function() {
+
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/chatHub")
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+
+        connection.start().then(function () {
+            console.log("connected");
+        });
+
+        function send() {
+            const user = null;
+            const message = null;
+            connection.invoke("SendMessage", user, message).catch(err => console.error(err.toString()));
+        }
+
+
+        const messages = [];
+        connection.on("ReceiveMessage", (message) => {
+            messages.push(
+                message
+            )
+            document.getElementById("messagesList").appendChild(li);
+        });
+
+
+        const app = new Vue({
+            el: "#app",
+            data(){
+                return {
+                    text: ''
+                }
+            },
+            computed: {
+                messages() {
+                    return messages.sort((f, s) => new Date(f).getTime() < new Date(s).getTime() ? -1 : new Date(f).getTime() == new Date(s).getTime() ? 0 : 1);
+                }
+            },
+            methods: {
+                send() {
+                    const discuc = window.location.pathname.split('/').slice(-1)[0];
+
+                    fetch(`/chatHub?discussion=${discuc}&message=${this.text}&user=` + "@User.Identity.Name", {
+                        method: "Get",
+                    })
+                }
+            }
+        })
+    }, 1000)
+</script>
+

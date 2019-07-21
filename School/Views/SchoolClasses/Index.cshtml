@@ -1,0 +1,47 @@
+﻿@using School.Data.Models
+@model IEnumerable<School.Data.Models.SchoolClass>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+
+}
+
+
+<h1>Список классов</h1>
+
+
+<div class="card-deck">
+    @foreach (var item in Model)
+    {
+        <div class="card" style="max-width:18rem;">
+            <div class="card-body">
+                <h5 class="card-title"> @item.Name</h5>
+                <hr />
+                <h3>Обсуждения</h3>
+                <ul>
+                    @foreach (var disc in item.Discussions)
+                    {
+                        <li>
+                            @disc.Name
+                            <a href="#" class="float-right badge badge-@(disc.Status == DiscussionStatus.CLOSE ? "success" : disc.Status == DiscussionStatus.FIRE ? "danger" : "warning") ">@(disc.Status == DiscussionStatus.CLOSE ? "Завершённа" : disc.Status == DiscussionStatus.FIRE ? "Срочно" : "В процессе")</a>
+                        </li>
+                    }
+                </ul>
+                <hr />
+                <h3>Родители</h3>
+                <ul>
+                    @foreach (var parent in item.Parents)
+                    {
+                        <li>
+                            @parent.FullName
+                        </li>
+                    }
+                </ul>
+                <a class="float-right" href="/SchoolClasses/@item.Id/Discussion/Index">К обсуждениям класса</a>
+            </div>
+        </div>
+    }
+</div>
+

@@ -1,0 +1,33 @@
+﻿@using School.Data.Models;
+@model Dictionary<School.Data.Models.DiscussionStatus, List<School.Data.Models.Discussion>>
+
+@{
+    ViewData["Title"] = "Discussion";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h1>Обсуждения <a href="./Create"><i class="fa fa-plus float-right"></i></a></h1>
+
+
+@foreach (var collection in Model)
+{
+    <hr>
+    <h2> @(collection.Key == DiscussionStatus.CLOSE ? "Завершённые" : collection.Key == DiscussionStatus.FIRE ? "Срочные" : "В процессе")</h2>
+    <div class="card-deck">
+        @foreach (var discuc in collection.Value)
+        {
+
+            <div class="card" style="max-width:18rem;">
+                <div class="card-body">
+                    <h5 class="card-title"> @discuc.Name <a href="#" class="float-right badge badge-@(collection.Key == DiscussionStatus.CLOSE ? "success" : collection.Key == DiscussionStatus.FIRE ? "danger" : "warning") ">@(collection.Key == DiscussionStatus.CLOSE ? "Завершённа" : collection.Key == DiscussionStatus.FIRE ? "Срочно" : "В процессе")</a> </h5>
+                    <p class="card-text">
+                        @discuc.Description
+                    </p>
+                    <a class="float-right" href="./Details/@discuc.Id">К обсуждению</a>
+                </div>
+            </div>
+        }
+    </div>
+}
+
