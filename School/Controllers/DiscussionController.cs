@@ -67,7 +67,8 @@ namespace Sample.Mvc.Controllers
                 SchoolClassId = discussion.SchoolClassId,
                 Name = discussion.Name,
                 Description = discussion.Description,
-                EndDate = discussion.EndDate,
+                EndDate = discussion.EndDate, 
+                Status = discussion.Status,
                 SchoolClassParentsCount = schoolClassParentsCount,
                 Voicinigs = discussion.Voicinigs.Select(v => new VoicingModel()
                 {

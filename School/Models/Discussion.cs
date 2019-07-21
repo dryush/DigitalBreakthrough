@@ -1,4 +1,5 @@
 ﻿
+using School.Data.Models;
 using System;
 using System.Collections.Generic;
 
@@ -20,6 +21,7 @@ namespace School.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public DateTime EndDate { get; set; }
+        public DiscussionStatus Status { get; set; }
         public List<VoicingModel> Voicinigs { get; set; } = new List<VoicingModel>();
         public int SchoolClassParentsCount { get; set; }
 

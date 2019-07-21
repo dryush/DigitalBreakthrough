@@ -10,7 +10,7 @@
 <h1>Обсуждения <a href="./Create"><i class="fa fa-plus float-right"></i></a></h1>
 
 
-@foreach (var collection in Model)
+@foreach (var collection in Model.Select( v => v).OrderBy( v => (int)v.Key))
 {
     <hr>
     <h2> @(collection.Key == DiscussionStatus.CLOSE ? "Завершённые" : collection.Key == DiscussionStatus.FIRE ? "Срочные" : "В процессе")</h2>

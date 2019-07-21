@@ -16,11 +16,10 @@ namespace School.Data.Models
         public DiscussionStatus Status
         {
             get
-            {
-                if (EndDate.AddDays(2) > DateTime.Now)
-                    return DiscussionStatus.FIRE;
-                if (EndDate < DateTime.Now)
+            {   if (EndDate < DateTime.Now)
                     return DiscussionStatus.CLOSE;
+                if (EndDate < DateTime.Now.AddDays(2))
+                    return DiscussionStatus.FIRE;
                 else
                     return DiscussionStatus.PROCESS;
             }
