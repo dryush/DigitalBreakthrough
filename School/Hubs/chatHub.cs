@@ -17,10 +17,10 @@ namespace School.Hubs
         {
             _context = context;
         }
-
-        public async Task SendMessage(string user, string message, string discussion)
+        
+        public async Task SendMessage(string user, string userName, string message, string discussion)
         {
-            var us = _context.Users.FirstOrDefault( u => u.UserName == user);
+            var us = _context.Users.FirstOrDefault( u => u.UserName == userName);
 
             var nMes = new Message() {
                 DiscussionId = int.Parse(discussion),

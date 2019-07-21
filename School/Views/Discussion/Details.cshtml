@@ -23,11 +23,14 @@
             <div class="modal-content" style="">
                 <div class="modal-content" style="padding-left:15px; padding-right:15px;min-height:300px;">
                     <ul>
-                        <li v-for="mes of messages">
-                            <bold>{{mes.fullName}}</bold>
-                            <br />
-                            <span>{{mes.text}}</span>
-                        </li>
+                        <template v-for="mes of messages">
+                            <span>
+                                <b>{{mes.fullName}}</b>
+                                <br />
+                                <span>{{mes.text}}</span>
+                            </span>
+                            <hr />
+                        </template>
                     </ul>
                 </div>
                 <div class="row">
@@ -121,10 +124,10 @@
 
         const messages = [];
         connection.on("ReceiveMessage", (message) => {
+            console.log(message)
             messages.push(
                 message
             )
-            document.getElementById("messagesList").appendChild(li);
         });
 
 
@@ -132,21 +135,23 @@
             el: "#app",
             data(){
                 return {
-                    text: ''
+                    text: '',
+                    mes: messages,
                 }
             },
             computed: {
                 messages() {
-                    return messages.sort((f, s) => new Date(f).getTime() < new Date(s).getTime() ? -1 : new Date(f).getTime() == new Date(s).getTime() ? 0 : 1);
+                    return this.mes.sort((f, s) => new Date(f).getTime() < new Date(s).getTime() ? -1 : new Date(f).getTime() == new Date(s).getTime() ? 0 : 1);
                 }
             },
             methods: {
                 send() {
                     const discuc = window.location.pathname.split('/').slice(-1)[0];
 
-                    fetch(`/chatHub?discussion=${discuc}&message=${this.text}&user=` + "@User.Identity.Name", {
+                    @*fetch(`/chatHub?user=${""}$discussion=${discuc}&message=${this.text}&userName=` + "@User.Identity.Name", {
                         method: "Get",
-                    })
+                    })*@
+                    connection.invoke("SendMessage", "",  '@User.Identity.Name', this.text, discuc,  )
                 }
             }
         })
